@@ -1,0 +1,446 @@
+[{
+    "name": ["add"],
+    "description": "Add an object to ipfs.",
+    "args": [{
+        "name":"path",
+        "type":"file",
+        "required": true,
+        "variadic": true
+    }],
+    "kwargs": ["recursive","quiet","progress","trickle","only-hash","wrap-with-directory","hidden","chunker","timeout"],
+    "output": "chunked"
+},{
+    "name": ["cat"],
+    "description": "Show IPFS object data.",
+    "args": [{
+        "name": "ipfs-path",
+        "type": "multiaddr",
+        "required": true,
+        "variadic": true
+    }],
+    "kwargs": ["timeout"],
+    "output": "stream"
+},{
+    "name": ["ls"],
+    "description": "List links from an object.",
+    "args": [{
+        "name": "ipfs-path",
+        "type": "multiaddr",
+        "required": true,
+        "variadic": true
+    }],
+    "kwargs": ["headers","encoding","timeout"]
+},{
+    "name": ["refs"],
+    "description": "List links (references) from an object.",
+    "args": [{
+        "name": "ipfs-path",
+        "type": "multiaddr",
+        "required": true,
+        "variadic": true
+    }],
+    "kwargs": ["format","edges","unique","recursive","encoding","timeout"],
+    "output": "chunked"
+},{
+    "name": ["refs","local"],
+    "description": "List all local references.",
+    "args": [],
+    "kwargs": ["encoding","timeout"],
+    "output": "stream"
+},{
+    "name": ["block","stat"],
+    "description": "Print information of a raw IPFS block.",
+    "args": [{
+        "name": "key",
+        "type": "multihash",
+        "required": true,
+        "variadic": false
+    }],
+    "kwargs": ["encoding","timeout"]
+},{
+    "name": ["block","get"],
+    "description": "Get a raw IPFS block",
+    "args": [{
+        "name": "key",
+        "type": "multihash",
+        "required": true,
+        "variadic": false
+    }],
+    "kwargs": ["timeout"],
+    "output": "stream"
+},{
+    "name": ["block","put"],
+    "description": "Store input as an IPFS block.",
+    "args": [{
+        "name": "data",
+        "type": "file",
+        "required": true,
+        "variadic": false
+    }],
+    "kwargs": ["encoding","timeout"]
+},{
+    "name": ["object","new"],
+    "description": "Create a new object from an ipfs template.",
+    "args": [{
+        "name": "template",
+        "type": "string",
+        "required": false,
+        "variadic": false
+    }],
+    "kwargs": ["encoding","timeout"]
+},{
+    "name": ["object","data"],
+    "description": "Output the raw bytes in an IPFS object.",
+    "args": [{
+        "name": "key",
+        "type": "multihash",
+        "required": true,
+        "variadic": false
+    }],
+    "kwargs": ["timeout"],
+    "output": "stream"
+},{
+    "name": ["object","links"],
+    "description": "Output the links pointed to by the specified object.",
+    "args": [{
+        "name": "key",
+        "type": "multihash",
+        "required": true,
+        "variadic": false
+    }],
+    "kwargs": ["encoding","timeout"]
+},{
+    "name": ["object","get"],
+    "description": "Get and serialize the DAG node named by KEY.",
+    "args": [{
+        "name": "key",
+        "type": "multihash",
+        "required": true,
+        "variadic": false
+    }],
+    "kwargs": ["encoding","timeout"]
+},{
+    "name": ["object","put"],
+    "description": "stores input as a DAG object, outputs its key.",
+    "args": [{
+        "name": "data",
+        "type": "file",
+        "required": true,
+        "variadic": false
+    }],
+    "kwargs": ["inputenc","encoding","timeout"]
+},{
+    "name": ["object","stat"],
+    "description": "Get stats for the DAG node named by KEY.",
+    "args": [{
+        "name": "key",
+        "type": "multihash",
+        "required": true,
+        "variadic": false
+    }],
+    "kwargs": ["encoding","timeout"]
+},{
+    "name": ["object","patch"],
+    "description": "Create a new DAG node based on an existing one.",
+    "args": [{
+        "name": "root",
+        "type": "string",
+        "required": true,
+        "variadic": false
+    },{
+        "name": "command",
+        "type": "string",
+        "required": true,
+        "variadic": false
+    },{
+        "name": "args",
+        "type": "string",
+        "required": true,
+        "variadic": true
+    }],
+    "kwargs": ["create","encoding","timeout"]
+},{
+    "name": ["file","ls"],
+    "description": "List directory contents for Unix-filesystem objects.",
+    "args": [{
+        "name": "ipfs-path",
+        "type": "multiaddr",
+        "required": true,
+        "variadic": true
+    }],
+    "kwargs": ["encoding","timeout"]
+},{
+    "name": ["resolve"],
+    "description": "Resolve the value of names to IPFS.",
+    "args": [{
+        "name": "name",
+        "type": "multiaddr",
+        "required": true,
+        "variadic": false
+    }],
+    "kwargs": ["recursive","encoding","timeout"]
+},{
+    "name": ["name","publish"],
+    "description": "Publish an object to IPNS.",
+    "args": [{
+        "name": "name",
+        "type": "multiaddr",
+        "required": false,
+        "variadic": false
+    },{
+        "name": "ipfs-path",
+        "type": "multiaddr",
+        "required": true,
+        "variadic": false
+    }],
+    "kwargs": ["encoding","timeout"]
+},{
+    "name": ["name","resolve"],
+    "description": "Get the value currently published at an IPNS name.",
+    "args": [{
+        "name": "name",
+        "type": "multihash",
+        "required": true,
+        "variadic": false
+    }],
+    "kwargs": ["recursive"]
+},{
+    "name": ["dns"],
+    "description": "DNS link resolver.",
+    "args": [{
+        "name": "domain-name",
+        "type": "string",
+        "required": true,
+        "variadic": false
+    }],
+    "kwargs": ["recursive","encoding","timeout"]
+},{
+    "name": ["pin","add"],
+    "description": "Pin objects to local storage.",
+    "args": [{
+        "name": "ipfs-path",
+        "type": "multiaddr",
+        "required": true,
+        "variadic": true
+    }],
+    "kwargs": ["recursive","encoding","timeout"]
+},{
+    "name": ["pin","rm"],
+    "description": "Unpin an object from local storage.",
+    "args": [{
+        "name": "ipfs-path",
+        "type": "multiaddr",
+        "required": true,
+        "variadic": true
+    }],
+    "kwargs": ["recursive","encoding","timeout"]
+},{
+    "name": ["pin","ls"],
+    "description": "List objects pinned to local storage.",
+    "args": [],
+    "kwargs": ["type","count","quiet","encoding","timeout"]
+},{
+    "name": ["repo","gc"],
+    "description": "Perform a garbage collection sweep on non-pinned objects.",
+    "args": [],
+    "kwargs": ["quiet","encoding","timeout"],
+    "output": "chunked"
+},{
+    "name": ["id"],
+    "description": "Show IPFS Node ID information",
+    "args": [],
+    "kwargs": ["format","encoding","timeout"]
+},{
+    "name": ["bootstrap"],
+    "description": "Show peers in the bootstrap list.",
+    "args": [],
+    "kwargs": ["encoding","timeout"],
+    "aliases": [["bootrap","list"]]
+},{
+    "name": ["bootstrap","add"],
+    "description": "Add peers to the bootstrap list.",
+    "args": [{
+        "name": "peers",
+        "type": "multiaddr",
+        "required": true,
+        "variadic": true
+    }],
+    "kwargs": ["default","encoding","timeout"]
+},{
+    "name": ["bootstrap","rm"],
+    "description": "Remove peers from the bootstrap list.",
+    "args": [{
+        "name": "peers",
+        "type": "multiaddr",
+        "required": true,
+        "variadic": true
+    }],
+    "kwargs": ["all","encoding","timeout"]
+},{
+    "name": ["swarm","peers"],
+    "description": "List peers with open connections.",
+    "args": [],
+    "kwargs": ["encoding","timeout"]
+},{
+    "name": ["swarm","addrs"],
+    "description": "List known addresses.",
+    "args": [],
+    "kwargs": ["encoding","timeout"]
+},{
+    "name": ["swarm","addrs","local"],
+    "description": "List local addresses.",
+    "args": [],
+    "kwargs": ["encoding","timeout"]
+},{
+    "name": ["swarm","connect"],
+    "description": "Open connection to a given address.",
+    "args": [{
+        "name": "address",
+        "type": "multiaddr",
+        "required": true,
+        "variadic": true
+    }],
+    "kwargs": ["encoding","timeout"]
+},{
+    "name": ["swarm","disconnect"],
+    "description": "Close connection to a given address.",
+    "args": [{
+        "name": "address",
+        "type": "multiaddr",
+        "required": true,
+        "variadic": true
+    }],
+    "kwargs": ["encoding","timeout"]
+},{
+    "name": ["swarm","filters"],
+    "description": "List currently applied filters.",
+    "args": [],
+    "kwargs": ["encoding","timeout"]
+},{
+    "name": ["swarm","filters","add"],
+    "description": "Add an address filter.",
+    "args": [{
+        "name": "address",
+        "type": "multiaddr",
+        "required": true,
+        "variadic": true
+    }],
+    "kwargs": ["encoding","timeout"]
+},{
+    "name": ["swarm","filters","rm"],
+    "description": "Remove an address filter.",
+    "args": [{
+        "name": "address",
+        "type": "multiaddr",
+        "required": true,
+        "variadic": true
+    }],
+    "kwargs": ["encoding","timeout"]
+},{
+    "name": ["dht","query"],
+    "description": "Run a 'FindClosestPeers' query through the DHT.",
+    "args": [{
+        "name":"peer-id",
+        "type":"multihash",
+        "required": true,
+        "variadic": true
+    }],
+    "kwargs": ["verbose","encoding","timeout"],
+    "output": "chunked"
+},{
+    "name": ["dht","findprovs"],
+    "description": "Run a 'FindProviders' query through the DHT.",
+    "args": [{
+        "name":"key",
+        "type":"multihash",
+        "required": true,
+        "variadic": true
+    }],
+    "kwargs": ["verbose","encoding","timeout"],
+    "output": "chunked"
+},{
+    "name": ["dht","findpeer"],
+    "description": "Run a 'FindPeer' query through the DHT.",
+    "args": [{
+        "name":"peer-id",
+        "type":"multihash",
+        "required": true,
+        "variadic": true
+    }],
+    "kwargs": ["encoding","timeout"],
+    "output": "chunked"
+},{
+    "name": ["dht","get"],
+    "description": "Run a 'GetValue' query through the DHT.",
+    "args": [{
+        "name":"key",
+        "type":"multihash",
+        "required": true,
+        "variadic": true
+    }],
+    "kwargs": ["verbose","encoding","timeout"],
+    "output": "chunked"
+},{
+    "name": ["dht","put"],
+    "description": "Run a 'PutValue' query through the DHT.",
+    "args": [{
+        "name":"key",
+        "type":"multihash",
+        "required": true,
+        "variadic": false
+    },{
+        "name":"value",
+        "type":"string",
+        "required": true,
+        "variadic": false
+    }],
+    "kwargs": ["verbose","encoding","timeout"],
+    "output": "chunked"
+},{
+    "name": ["ping"],
+    "description": "Send echo request packets to IPFS hosts.",
+    "args": [{
+        "name":"peer-id",
+        "type":"multihash",
+        "required": true,
+        "variadic": true
+    }],
+    "kwargs": ["encoding","timeout"],
+    "output": "chunked"
+},{
+    "name": ["config"],
+    "description": "Get and set IPFS config values.",
+    "args": [{
+        "name":"key",
+        "type":"multihash",
+        "required": true,
+        "variadic": false
+    },{
+        "name":"value",
+        "type":"string",
+        "required": false,
+        "variadic": false
+    }],
+    "kwargs": ["bool","json","encoding","timeout"]
+},{
+    "name": ["config","show"],
+    "description": "Outputs the content of the config file.",
+    "args": [],
+    "kwargs": ["timeout"],
+    "output": "stream"
+},{
+    "name": ["config","replace"],
+    "description": "Replace the config with FILE.",
+    "args": [{
+        "name": "file",
+        "type": "file",
+        "required": true,
+        "variadic": false
+    }],
+    "kwargs": ["encoding","timeout"]
+},{
+    "name": ["version"],
+    "description": "Show IPFS version information.",
+    "args": [],
+    "kwargs": ["number","encoding","timeout"]
+}]
