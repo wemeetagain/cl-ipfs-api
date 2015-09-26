@@ -11,7 +11,6 @@
   ((%name :initform "json")))
 
 (defmethod parse ((encoding json-encoding) command stream)
-					;(yason:parse stream :object-as :alist))
   (jonathan:parse stream :as :alist))
 
 (defmethod parse ((encoding json-encoding) command (stream stream))
@@ -26,11 +25,16 @@
 
 (defmethod parse ((encoding text-encoding) command stream)
   stream)
- ; (let ((output (make-string-output-stream)))
-    ;(setf (chunga:chunked-stream-input-chunking-p stream) nil)
-    ;(alexandria:copy-stream (flexi-streams:make-flexi-stream stream :external-format :utf8) output :element-type 'character)
-    ;(alexandria:copy-stream stream output :element-type 'character)
-    ;(get-output-stream-string output)))
+
+; TODO: rename this encoding
+(defmethod parse ((encoding text-encoding) command (stream chunga:chunked-input-stream))
+  (loop for buffer = (make-array 1024 :element-type '(unsigned-byte 8))
+     for n of-type fixnum = (read-sequence buffer stream)
+     until (zerop n)
+     collect (if (= 1024 n)
+		 buffer
+		 (subseq buffer 0 n)) into pieces
+     finally (return (apply #'concatenate '(vector (unsigned-byte 8)) pieces))))
 
 (defmethod parse ((encoding text-encoding) command (stream stream))
   (loop for line = (handler-case
