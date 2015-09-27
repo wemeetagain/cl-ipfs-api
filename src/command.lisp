@@ -6,8 +6,7 @@
      ,@(if description (list description))
      (request-api
       ,(make-command-name name)
-      ,@(or (make-arg-list args)
-	    '(()))
+      ,(make-args-to-arg-list args)
       (list
        ,@(when (string= output "stream") '((cons "encoding"  "text")))
        ,@(loop for kwarg in kwargs

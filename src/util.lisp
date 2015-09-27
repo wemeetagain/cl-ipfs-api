@@ -10,17 +10,40 @@
   (format nil "~{/~A~}" list))
 
 (defun make-arg-list (args)
-  (let* ((args (loop for arg in args
-		  collect (alexandria:plist-alist arg)))
-	 (every-required (every (lambda (arg)
-				  (cdr (assoc :required arg)))
-				args)))
-    (if every-required
-	(loop for arg in args
-	   collect (string-symbol
-		    (cdr (assoc :name arg))))
-	'(args))))
-     
+  (loop for arg in args
+     collect (string-symbol
+	      (cdr (assoc :name (alexandria:plist-alist arg))))))
+
+(defun make-args-to-arg-list (args)
+  (let ((args (loop for arg in args
+		 collect (alexandria:plist-alist arg)))
+	(some-variadic (loop for arg in args
+			  if (cdr (assoc :variadic args))
+			  return t)))
+    (cond
+      ((= 0 (length args))
+       nil)
+      ((= 1 (length args))
+       (string-symbol
+	(cdr (assoc :name (car args)))))
+      ((not some-variadic)
+       `(list ,@(loop for arg in args
+		   collect (string-symbol
+			    (cdr (assoc :name arg))))))
+      (t
+       `(concatenate 'list
+		     ,@(loop for arg in args
+			  if (cdr (assoc :variadic arg))
+			  collect `(if (consp ,(string-symbol
+						(cdr (assoc :name arg))))
+				       ,(string-symbol
+					 (cdr (assoc :name arg)))
+				       (list ,(string-symbol
+					       (cdr (assoc :name arg)))))
+			  else
+			  collect `(list ,(string-symbol
+					   (cdr (assoc :name arg))))))))))
+
 (defun make-kwarg-list (kwargs)
   (loop for kwarg in kwargs
      collect (string-symbol kwarg)))
@@ -60,4 +83,5 @@
   (if (atom args)
       `(("arg" . ,args))
       (loop for arg in args
-	   collect (cons "arg" arg))))
+	 if (not (null arg))
+	 collect (cons "arg" arg))))
