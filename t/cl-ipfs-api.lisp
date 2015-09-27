@@ -74,11 +74,11 @@
 	     (defun test-command (data &key encoding cl-ipfs-api::want-stream)
 	       "test description"
 	       (cl-ipfs-api:request-api "/test/command" data (list (cons "encoding" encoding)) cl-ipfs-api::want-stream nil)))
-  ;; variadic/optional args
+  ;; variadic args
   (is-expand (cl-ipfs-api::define-command :name ("test" "command") :args ((:name "data" :required nil)) :kwargs ("encoding") :description "test description")
-	     (defun test-command (cl-ipfs-api::args &key encoding cl-ipfs-api::want-stream)
+	     (defun test-command (data &key encoding cl-ipfs-api::want-stream)
 	       "test description"
-	       (cl-ipfs-api:request-api "/test/command" cl-ipfs-api::args (list (cons "encoding" encoding)) cl-ipfs-api::want-stream nil)))
+	       (cl-ipfs-api:request-api "/test/command" data (list (cons "encoding" encoding)) cl-ipfs-api::want-stream nil)))
   ;; stream output
   (is-expand (cl-ipfs-api::define-command :name ("test" "command") :args ((:name "data" :required t)) :kwargs () :description "test description" :output "stream")
 	     (defun test-command (data &key cl-ipfs-api::want-stream)
@@ -90,13 +90,20 @@
       (cadr (split-sequence:split-sequence #\Space (ipfs-command '("add") `(,*test-file-path*) nil)))))
 
 (subtest "cat"
-  (is-api-cli '("cat") `(,*test-file-hash*) nil))
+  (is (babel:octets-to-string (cl-ipfs-api:cat *test-file-hash*))
+      (ipfs-command '("cat") `(,*test-file-hash*) nil)))
 
-;(subtest "ls")
+(subtest "ls"
+  (is-api-cli '("ls") `(,*test-dir-hash*) '(("encoding" "json")))
+  (is-api-cli '("ls") `(,*test-dir-hash*) '(("encoding" "text"))))
 
-;(subtest "refs")
+(subtest "refs"
+  (is (reverse (car (cl-ipfs-api:refs *test-dir-hash* :encoding "json")))
+      (ipfs-command '("refs") `(,*test-dir-hash*) '(("encoding" "json")))))
 
-;(subtest "refs local")
+(subtest "refs local"
+  (is (babel:octets-to-string (cl-ipfs-api:refs-local :encoding "text"))
+      (ipfs-command '("refs" "local") nil nil)))
 
 (subtest "block stat"
   (is-api-cli '("block" "stat") `(,*test-file-hash*) '(("encoding" "json")))
@@ -106,7 +113,9 @@
   (is (babel:octets-to-string (cl-ipfs-api:block-get *test-file-hash*))
       (ipfs-command '("block" "get") `(,*test-file-hash*) nil)))
 
-;(subtest "block put")
+(subtest "block put"
+  (is-api-cli '("block" "put") `(,*test-file-path*) '(("encoding" "json")))
+  (is-api-cli '("block" "put") `(,*test-file-path*) '(("encoding" "text"))))
 
 (subtest "object new"
   (is (cl-ipfs-api:object-new nil :encoding "json")
@@ -118,7 +127,9 @@
   (is (babel:octets-to-string (cl-ipfs-api:object-data *test-file-hash*))
       (ipfs-command '("object" "data") `(,*test-file-hash*) nil)))
 
-;(subtest "object links")
+(subtest "object links"
+  (is-api-cli '("object" "links") `(,*test-dir-hash*) '(("encoding" "json")))
+  (is-api-cli '("object" "links") `(,*test-dir-hash*) '(("encoding" "text"))))
 
 (subtest "object get"
   (is-api-cli '("object" "get") `(,*test-file-hash*) '(("encoding" "json"))))
@@ -131,7 +142,9 @@
 
 ;(subtest "object patch")
 
-;(subtest "file ls")
+(subtest "file ls"
+  (is-api-cli '("file" "ls") `(,*test-dir-hash*) '(("encoding" "json")))
+  (is-api-cli '("file" "ls") `(,*test-dir-hash*) '(("encoding" "text"))))
 
 ;(subtest "resolve")
 
@@ -144,17 +157,37 @@
   (is-api-cli '("dns") '("ipfs.io") '(("encoding" "text"))))
 
 (subtest "pin add"
-  (is-api-cli '("pin" "add") `(,*test-file-hash*) '(("encoding" "json")))
-  (is-api-cli '("pin" "add") `(,*test-file-hash*) '(("encoding" "text"))))
+  (is (let ((output (cl-ipfs-api:pin-add *test-file-hash*)))
+	(cl-ipfs-api:pin-rm *test-file-hash* :encoding "json")
+	output)
+      (let ((output (cl-ipfs-api:pin-add *test-file-hash*)))
+	(ipfs-command '("pin" "rm") `(,*test-file-hash*) '(("encoding" "json")))
+	output))
+  (is (let ((output (cl-ipfs-api:pin-add *test-file-hash*)))
+	(cl-ipfs-api:pin-rm *test-file-hash* :encoding "text")
+	output)
+      (let ((output (cl-ipfs-api:pin-add *test-file-hash*)))
+	(ipfs-command '("pin" "rm") `(,*test-file-hash*) '(("encoding" "text")))
+	output)))
 
 (subtest "pin rm"
-  (is-api-cli '("pin" "rm") `(,*test-file-hash*) '(("encoding" "json")))
-  (is-api-cli '("pin" "rm") `(,*test-file-hash*) '(("encoding" "text"))))
+  (is (progn
+	(cl-ipfs-api:pin-add *test-file-hash*)
+	(cl-ipfs-api:pin-rm *test-file-hash* :encoding "json"))
+      (progn
+	(cl-ipfs-api:pin-add *test-file-hash*)
+	(ipfs-command '("pin" "rm") `(,*test-file-hash*) '(("encoding" "json")))))
+  (is (progn
+	(cl-ipfs-api:pin-add *test-file-hash*)
+	(cl-ipfs-api:pin-rm *test-file-hash* :encoding "text"))
+      (progn
+	(cl-ipfs-api:pin-add *test-file-hash*)
+	(ipfs-command '("pin" "rm") `(,*test-file-hash*) '(("encoding" "text"))))))
 
 (subtest "pin ls"
   (cl-ipfs-api:pin-add *test-file-hash*)
   (is-api-cli '("pin" "ls") nil '(("encoding" "json")))
-  (is-api-cli '("pin" "ls") nil '(("encoding" "text"))))
+  (cl-ipfs-api:pin-rm *test-file-hash*))
 
 ;(subtest "repo gc")
 
@@ -207,8 +240,8 @@
 ;(subtest "ping")
 
 (subtest "config"
-  (is-api-cli '("config") '("Datastore.Path") '(("encoding" "json")))
-  (is-api-cli '("config") '("Datastore.Path") '(("encoding" "text"))))
+  (is-api-cli '("config") '("Datastore.Path" nil) '(("encoding" "json")))
+  (is-api-cli '("config") '("Datastore.Path" nil) '(("encoding" "text"))))
 
 (subtest "config show"
   (is (babel:octets-to-string (cl-ipfs-api:config-show))
