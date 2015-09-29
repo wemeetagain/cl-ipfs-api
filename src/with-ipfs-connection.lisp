@@ -1,0 +1,10 @@
+(cl:in-package :cl-ipfs-api)
+
+(defmacro with-ipfs-connection ((&key (scheme *scheme*) (host *host*) (port *port*) (api-path *api-path*) (encoding *encoding*) (user-agent *user-agent*)) &body body)
+  `(let ((*scheme* ,scheme)
+	 (*host* ,host)
+	 (*port* ,port)
+	 (*api-path* ,api-path)
+	 (*encoding* ,encoding)
+	 (*user-agent* ,user-agent))
+     ,@body))

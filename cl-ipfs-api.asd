@@ -18,6 +18,7 @@
 		:components
 		((:file "package")
 		 (:file "config")
+		 (:file "with-ipfs-connection")
 		 (:file "util")
 		 (:file "encoding")
 		 (:static-file "definitions.json")

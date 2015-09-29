@@ -71,12 +71,12 @@
 (subtest "command expansion"
   ;; test normal
   (is-expand (cl-ipfs-api::define-command :name ("test" "command") :args ((:name "data" :required t)) :kwargs ("encoding") :description "test description")
-	     (defun test-command (data &key encoding cl-ipfs-api::want-stream)
+	     (defun test-command (data &key (encoding cl-ipfs-api:*encoding*) cl-ipfs-api::want-stream)
 	       "test description"
 	       (cl-ipfs-api:request-api "/test/command" data (list (cons "encoding" encoding)) cl-ipfs-api::want-stream nil)))
   ;; variadic args
   (is-expand (cl-ipfs-api::define-command :name ("test" "command") :args ((:name "data" :required nil)) :kwargs ("encoding") :description "test description")
-	     (defun test-command (data &key encoding cl-ipfs-api::want-stream)
+	     (defun test-command (data &key (encoding cl-ipfs-api:*encoding*) cl-ipfs-api::want-stream)
 	       "test description"
 	       (cl-ipfs-api:request-api "/test/command" data (list (cons "encoding" encoding)) cl-ipfs-api::want-stream nil)))
   ;; stream output

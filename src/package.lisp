@@ -3,6 +3,8 @@
 (defpackage :cl-ipfs-api
   (:use #:cl)
   (:nicknames #:ipfs-api)
+  ;; connection macro
+  (:export #:with-ipfs-connection)
   ;; config
   (:export #:*api-path*
 	   #:*user-agent*
