@@ -1,0 +1,41 @@
+language: common-lisp
+sudo: false
+
+env:
+  global:
+    - PATH=~/.roswell/bin:~/ipfs:$PATH
+    - ROSWELL_INSTALL_DIR=$HOME/.roswell
+  matrix:
+    - LISP=sbcl-bin COVERALLS=true
+    - LISP=ccl-bin
+
+install:
+  # Install and run ipfs
+  - wget https://gobuilder.me/get/github.com/ipfs/go-ipfs/cmd/ipfs/ipfs_master_linux-amd64.zip
+  - unzip ipfs_master_linux-amd64.zip
+  - ipfs init
+  - ipfs daemon &
+  # Install roswell
+  - curl -L https://raw.githubusercontent.com/snmsts/roswell/release/scripts/install-for-ci.sh | sh
+  # Install dependencies from HEAD, we need most recent
+  - git clone https://github.com/wemeetagain/dexador ~/lisp/dexador
+
+cache:
+  directories:
+    - $HOME/.roswell
+    - $HOME/.config/common-lisp
+
+script:
+    - ros -s prove -s cl-coveralls
+       -e '(setf *debugger-hook*
+                 (lambda (c h)
+                   (declare (ignore c h))
+                   (uiop:quit -1)))'
+                   -e '(ql:quickload :cl-ipfs-api)'
+       -e '(or (coveralls:with-coveralls (:exclude (list "t"))
+                    (asdf:test-system :cl-ipfs-api))
+                (uiop:quit -1))'
+
+notifications:
+  email:
+    - caymannava@gmail.com
