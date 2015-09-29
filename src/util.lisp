@@ -44,10 +44,14 @@
 			  collect `(list ,(string-symbol
 					   (cdr (assoc :name arg))))))))))
 
+
 (defun make-kwarg-list (kwargs)
   (loop for kwarg in kwargs
+     if (equal kwarg "encoding")
+     collect (list (string-symbol kwarg) '*encoding*)
+     else
      collect (string-symbol kwarg)))
-	    
+
 (defun string-symbol (string)
   (alexandria:symbolicate (string-upcase string)))
 
