@@ -5,16 +5,8 @@
   :description "A client library for the IPFS API"
   :author "Cayman Nava"
   :license "MIT"
-  :defsystem-depends-on (protobuf)
-  :depends-on (:alexandria :cl-multiaddr :dexador :flexi-streams :jonathan :protobuf :quri :yason)
-  :components (
-	       ;(:module "pb"
-		;:components
-		;((:protobuf-source-file "dht")
-		; (:protobuf-source-file "merkeldag")
-		; (:protobuf-source-file "unixfs")))
-	       (:module "src"
-		;:depends-on ("pb")
+  :depends-on (:alexandria :dexador :flexi-streams :jonathan :quri :yason)
+  :components ((:module "src"
 		:components
 		((:file "package")
 		 (:file "config")
