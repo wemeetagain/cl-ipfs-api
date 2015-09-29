@@ -65,7 +65,7 @@
   (string-downcase (symbol-name keyword)))
 
 ;;; close enough for now
-(defun get-contents (arg opts)
+(defun get-contents (args opts)
   (alexandria:if-let ((recursive-p (or (assoc "r" opts :test #'string=)
 				       (assoc "recursive" opts :test #'string=))))
     (labels ((all-files (pathname list)
@@ -76,12 +76,15 @@
 			  (loop for subdirectory in (uiop:subdirectories pathname)
 			     append (all-files subdirectory nil))
 			  list))
-		  ((pathnamep arg)
-		   (cons (cons (pathname-name arg) arg) list))
+		  ((pathnamep args)
+		   (cons (cons (pathname-name args) args) list))
 		  (t list))))
-      (all-files arg nil))
-    (if (pathnamep arg)
-        (cons (cons (pathname-name arg) arg) opts))))
+      (all-files args nil))
+    (typecase args
+      (pathname
+       (cons (cons (pathname-name args) args) opts))
+      ((vector (unsigned-byte 8))
+       (cons (cons "data" args) args) opts))))
 
 (defun args-to-opts (args)
   (if (atom args)
