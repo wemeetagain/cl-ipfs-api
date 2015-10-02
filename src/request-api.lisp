@@ -8,7 +8,7 @@
 		 ,@(remove nil opts :key #'cdr)))
 	 (content (when file-p
 		    (get-contents args opts)))
-	 (headers '(("User-Agent" . *user-agent*)))
+	 (headers `(("User-Agent" . ,*user-agent*)))
 	 (path (concatenate 'string *api-path* command))
 	 (encoding (get-encoding (or
 				  (cdr (assoc "encoding" opts :test #'string=))
