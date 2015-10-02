@@ -41,5 +41,8 @@
 		   body))))
       (dex:http-request-failed (e)
 	(error (if (or want-stream use-stream)
-		   (car (parse encoding command (dexador.error:response-body e)))
+		   (car (parse (if (cdr (assoc "encoding" opts :test #'string=))
+				   encoding
+				   (get-encoding "text"))
+			       command (dexador.error:response-body e)))
 		   (dexador.error:response-body e)))))))
