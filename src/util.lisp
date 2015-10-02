@@ -80,11 +80,11 @@
 		   (cons (cons (pathname-name args) args) list))
 		  (t list))))
       (all-files args nil))
-    (typecase args
-      (pathname
-       (cons (cons (pathname-name args) args) opts))
-      ((vector (unsigned-byte 8))
-       (cons (cons "data" args) args) opts))))
+    (cond
+      ((pathnamep args)
+       (list (cons (pathname-name args) args)))
+      ((subtypep (type-of args) '(vector (unsigned-byte 8)))
+       (list (cons "path" args))))))
 
 (defun args-to-opts (args)
   (if (atom args)
@@ -92,3 +92,11 @@
       (loop for arg in args
 	 if (not (null arg))
 	 collect (cons "arg" arg))))
+
+(defun content-body-args-p (args)
+  (flet ((content-body-arg-p (arg)
+	   (or (pathnamep arg)
+	       (subtypep (type-of arg) '(vector (unsigned-byte 8))))))
+    (if (atom args)
+	(content-body-arg-p args)
+	(some #'content-body-arg-p args))))

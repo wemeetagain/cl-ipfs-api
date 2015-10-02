@@ -1,7 +1,7 @@
 (cl:in-package #:cl-ipfs-api)
 
 (defun request-api (command args opts want-stream use-stream)
-  (let* ((file-p (pathnamep args))
+  (let* ((file-p (content-body-args-p args))
 	 (opts `(("stream-channels" . "true")
 		 ,@(unless (or (null args) file-p)
 			   (args-to-opts args))
