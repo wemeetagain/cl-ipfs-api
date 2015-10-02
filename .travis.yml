@@ -11,8 +11,8 @@ env:
 
 install:
   # Install and run ipfs
-  - wget https://gobuilder.me/get/github.com/ipfs/go-ipfs/cmd/ipfs/ipfs_master_linux-amd64.zip
-  - unzip ipfs_master_linux-amd64.zip
+  - curl -L https://gobuilder.me/get/github.com/ipfs/go-ipfs/cmd/ipfs/ipfs_master_linux-amd64.zip -o ipfs_master_linux-amd64.zip
+  - unzip -j ipfs_master_linux-amd64.zip -d ~/ipfs
   - ipfs init
   - ipfs daemon &
   # Install roswell
@@ -33,7 +33,7 @@ script:
                    (uiop:quit -1)))'
                    -e '(ql:quickload :cl-ipfs-api)'
        -e '(or (coveralls:with-coveralls (:exclude (list "t"))
-                    (asdf:test-system :cl-ipfs-api))
+       (prove:run :cl-ipfs-api-test))
                 (uiop:quit -1))'
 
 notifications:
