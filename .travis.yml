@@ -18,7 +18,7 @@ install:
   # Install roswell
   - curl -L https://raw.githubusercontent.com/snmsts/roswell/release/scripts/install-for-ci.sh | sh
   # Install dependencies from HEAD, we need most recent
-  - git clone https://github.com/wemeetagain/dexador ~/lisp/dexador
+  - git clone https://github.com/fukamachi/dexador ~/lisp/dexador
 
 cache:
   directories:
