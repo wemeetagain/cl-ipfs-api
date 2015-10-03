@@ -2,11 +2,11 @@
 
 (defmacro define-command (&key name args kwargs output description &allow-other-keys)
   `(defun ,(make-function-name name)
-       (,@(make-arg-list args) &key ,@(make-kwarg-list kwargs) want-stream)
-     ,@(if description (list description))
+       (,@(make-args-lambda-list args) &key ,@(make-kwarg-list kwargs) want-stream)
+     ,@(when description (list description))
      (request-api
       ,(make-command-name name)
-      ,(make-args-to-arg-list args)
+      ,(make-args-as-list args)
       (list
        ,@(when (string= output "stream") '((cons "encoding"  "text")))
        ,@(loop for kwarg in kwargs

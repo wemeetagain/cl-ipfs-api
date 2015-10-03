@@ -9,12 +9,12 @@
 (defun make-command-name (list)
   (format nil "~{/~A~}" list))
 
-(defun make-arg-list (args)
+(defun make-args-lambda-list (args)
   (loop for arg in args
      collect (string-symbol
 	      (cdr (assoc :name (alexandria:plist-alist arg))))))
 
-(defun make-args-to-arg-list (args)
+(defun make-args-as-list (args)
   (let ((args (loop for arg in args
 		 collect (alexandria:plist-alist arg)))
 	(some-variadic (loop for arg in args
@@ -84,7 +84,7 @@
       ((pathnamep args)
        (list (cons (pathname-name args) args)))
       ((subtypep (type-of args) '(vector (unsigned-byte 8)))
-       (list (cons "path" args))))))
+       (list (cons "data" args))))))
 
 (defun args-to-opts (args)
   (if (atom args)
