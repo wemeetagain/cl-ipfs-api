@@ -157,18 +157,11 @@
   (is-api-cli '("dns") '("ipfs.io") '(("encoding" "text"))))
 
 (subtest "pin add"
-  (is (let ((output (cl-ipfs-api:pin-add *test-file-hash*)))
-	(cl-ipfs-api:pin-rm *test-file-hash* :encoding "json")
-	output)
-      (let ((output (cl-ipfs-api:pin-add *test-file-hash*)))
-	(ipfs-command '("pin" "rm") `(,*test-file-hash*) '(("encoding" "json")))
-	output))
-  (is (let ((output (cl-ipfs-api:pin-add *test-file-hash*)))
-	(cl-ipfs-api:pin-rm *test-file-hash* :encoding "text")
-	output)
-      (let ((output (cl-ipfs-api:pin-add *test-file-hash*)))
-	(ipfs-command '("pin" "rm") `(,*test-file-hash*) '(("encoding" "text")))
-	output)))
+  (ignore-errors (cl-ipfs-api:pin-rm *test-file-hash* :encoding "json" :recursive "true"))
+  (is (cl-ipfs-api:pin-add *test-file-hash*)
+      '(("Pinned" "QmRv6FrRUqB8WkSn5FGa4QrsmBvyKTPrGamF43vYEAmPo4")))
+  (cl-ipfs-api:pin-rm *test-file-hash* :encoding "json" :recursive "true"))
+
 
 (subtest "pin rm"
   (is (progn
