@@ -8,6 +8,7 @@
         "variadic": true
     }],
     "kwargs": ["recursive","quiet","progress","trickle","only-hash","wrap-with-directory","hidden","chunker","timeout"],
+    "input": "stream",
     "output": "chunked"
 },{
     "name": ["cat"],
@@ -77,7 +78,8 @@
         "required": true,
         "variadic": false
     }],
-    "kwargs": ["encoding","timeout"]
+    "kwargs": ["encoding","timeout"],
+    "input": "stream"
 },{
     "name": ["object","new"],
     "description": "Create a new object from an ipfs template.",
@@ -128,7 +130,8 @@
         "required": true,
         "variadic": false
     }],
-    "kwargs": ["inputenc","encoding","timeout"]
+    "kwargs": ["inputenc","encoding","timeout"],
+    "input": "stream"
 },{
     "name": ["object","stat"],
     "description": "Get stats for the DAG node named by KEY.",
@@ -437,7 +440,8 @@
         "required": true,
         "variadic": false
     }],
-    "kwargs": ["encoding","timeout"]
+    "kwargs": ["encoding","timeout"],
+    "input": "stream"
 },{
     "name": ["version"],
     "description": "Show IPFS version information.",
