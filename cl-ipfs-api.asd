@@ -5,7 +5,7 @@
   :description "A client library for the IPFS API"
   :author "Cayman Nava"
   :license "MIT"
-  :depends-on (:alexandria :dexador :jonathan :quri :yason)
+  :depends-on (:alexandria :dexador :fast-io :jonathan :multipart-stream :multipart-vfile-tree :path-string :quri :yason)
   :components ((:module "src"
 		:components
 		((:file "package")

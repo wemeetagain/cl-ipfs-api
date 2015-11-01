@@ -1,12 +1,15 @@
 (cl:in-package #:cl-ipfs-api)
 
-(defmacro define-command (&key name args kwargs output description &allow-other-keys)
+(defmacro define-command (&key name args kwargs input output description &allow-other-keys)
   `(defun ,(make-function-name name)
        (,@(make-args-lambda-list args) &key ,@(make-kwarg-list kwargs) want-stream)
      ,@(when description (list description))
      (request-api
       ,(make-command-name name)
-      ,(make-args-as-list args)
+      ,(when (not (string= input "stream"))
+         (make-args-as-list args))
+      ,(when (string= input "stream")
+         (make-args-as-list args))
       (list
        ,@(when (string= output "stream") '((cons "encoding"  "text")))
        ,@(loop for kwarg in kwargs

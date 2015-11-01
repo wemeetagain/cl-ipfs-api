@@ -10,14 +10,15 @@
 (defclass json-encoding (encoding)
   ((%name :initform "json")))
 
-(defmethod parse ((encoding json-encoding) command stream)
-  (jonathan:parse stream :as :alist))
+(defmethod parse ((encoding json-encoding) command (stream string))
+  (let ((stream (make-string-input-stream stream)))
+    (parse encoding command stream)))
 
 (defmethod parse ((encoding json-encoding) command (stream stream))
-  (loop for json = (handler-case
+    (loop for json = (handler-case
 		       (yason:parse stream :object-as :alist)
-		     (error nil nil))
-     while (not (null json))
+		     (error (c) c))
+     while (not (or (null json) (typep json 'error)))
      collect json))
 
 (defclass text-encoding (encoding)

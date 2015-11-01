@@ -1,6 +1,6 @@
 (cl:in-package #:cl-user)
 
-(defpackage :cl-ipfs-api
+(defpackage #:cl-ipfs-api
   (:use #:cl)
   (:nicknames #:ipfs-api)
   ;; connection macro

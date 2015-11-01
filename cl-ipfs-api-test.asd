@@ -3,7 +3,7 @@
 (defsystem :cl-ipfs-api-test
   :description "cl-ipfs-api unit tests"
   :license "MIT"
-  :depends-on (:babel :cl-ipfs-api :prove)
+  :depends-on (:babel :cl-ipfs-api :jonathan :prove)
   :defsystem-depends-on (:prove-asdf)
   :components ((:module "t"
 		:components

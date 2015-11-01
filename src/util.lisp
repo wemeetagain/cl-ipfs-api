@@ -64,27 +64,50 @@
 (defun symbol-downcase (keyword)
   (string-downcase (symbol-name keyword)))
 
-;;; close enough for now
+(defun make-random-string ()
+  (format nil "~X~X~X~X~X~X" (random 4096) (random 4096) (random 4096) (random 4096) (random 4096) (random 4096)))
+
+(defclass ipfs-multipart-node (multipart-vfile-tree:multipart-vfile-node)
+   ((%top-level-p
+    :initarg :multipart-top-level-p
+    :accessor multipart-top-level-p
+    :initform nil)))
+
+(defclass ipfs-multipart-directory-node (multipart-vfile-tree:multipart-vfile-directory-node ipfs-multipart-node) ())
+
+(defmethod multipart-stream:multipart-headers ((n ipfs-multipart-directory-node))
+  (list
+   `("Content-Disposition" . ,(format nil "~A; filename=~S"
+				      (if (multipart-top-level-p n)
+					  "form-data; name=\"file\""
+					  "file")
+				      (multipart-vfile-tree::clean-path n)))
+   `("Content-Type" . ,(format nil "multipart/mixed; boundary=~A" (multipart-vfile-tree:multipart-vfile-boundary n)))))
+
 (defun get-contents (args opts)
-  (alexandria:if-let ((recursive-p (or (assoc "r" opts :test #'string=)
-				       (assoc "recursive" opts :test #'string=))))
-    (labels ((all-files (pathname list)
-	       (cond
-		 ((uiop:directory-pathname-p pathname)
-		  (append (loop for subfile in (uiop:directory-files pathname)
-			     collect (cons (pathname-name subfile) subfile))
-			  (loop for subdirectory in (uiop:subdirectories pathname)
-			     append (all-files subdirectory nil))
-			  list))
-		  ((pathnamep args)
-		   (cons (cons (pathname-name args) args) list))
-		  (t list))))
-      (all-files args nil))
-    (cond
-      ((pathnamep args)
-       (list (cons (pathname-name args) args)))
-      ((subtypep (type-of args) '(vector (unsigned-byte 8)))
-       (list (cons "data" args))))))
+  (labels ((make-multipart-dummy-file (item)
+	     (let ((filename (path-string:join "/tmp" (make-random-string))))
+	       (make-instance 'multipart-vfile-tree:multipart-vfile-node
+			      :path filename
+			      :base "/tmp"
+			      :contents item)))
+	   (make-multipart (item recurse-p)
+	     (typecase item
+	       (pathname
+		(multipart-vfile-tree:make-multipart-vfile-tree (namestring item) :recurse-p recurse-p :directory-class 'ipfs-multipart-directory-node))
+	       (string
+		(if (or (uiop:file-exists-p item) (uiop:directory-exists-p item))
+		    (multipart-vfile-tree:make-multipart-vfile-tree item :recurse-p recurse-p :directory-class 'ipfs-multipart-directory-node)
+		    (make-multipart-dummy-file item)))
+	       (otherwise
+		 (make-multipart-dummy-file item)))))
+    (let ((recursive-p (or (assoc "r" opts :test #'string=)
+			   (assoc "recursive" opts :test #'string=))))
+      (if (listp args)
+	  (mapcar (lambda (arg)
+		    (make-multipart arg recursive-p))
+		  args)
+	  (list (make-multipart args recursive-p))))))
 
 (defun args-to-opts (args)
   (if (atom args)
