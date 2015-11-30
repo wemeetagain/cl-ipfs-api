@@ -10,6 +10,10 @@ A client library for the IPFS API.
 
 ## Testing
 
+```lisp
+(asdf:test-system :cl-ipfs-api)
+```
+
 ## License
 
 MIT
