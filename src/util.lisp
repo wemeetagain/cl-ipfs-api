@@ -68,7 +68,7 @@
   (format nil "~X~X~X~X~X~X" (random 4096) (random 4096) (random 4096) (random 4096) (random 4096) (random 4096)))
 
 (defclass ipfs-multipart-node (multipart-vfile-tree:multipart-vfile-node)
-   ((%top-level-p
+  ((%top-level-p
     :initarg :multipart-top-level-p
     :accessor multipart-top-level-p
     :initform nil)))
@@ -86,28 +86,28 @@
 
 (defun get-contents (args opts)
   (labels ((make-multipart-dummy-file (item)
-	     (let ((filename (path-string:join "/tmp" (make-random-string))))
-	       (make-instance 'multipart-vfile-tree:multipart-vfile-node
-			      :path filename
-			      :base "/tmp"
-			      :contents item)))
-	   (make-multipart (item recurse-p)
-	     (typecase item
-	       (pathname
-		(multipart-vfile-tree:make-multipart-vfile-tree (namestring item) :recurse-p recurse-p :directory-class 'ipfs-multipart-directory-node))
-	       (string
-		(if (or (uiop:file-exists-p item) (uiop:directory-exists-p item))
-		    (multipart-vfile-tree:make-multipart-vfile-tree item :recurse-p recurse-p :directory-class 'ipfs-multipart-directory-node)
-		    (make-multipart-dummy-file item)))
-	       (otherwise
-		 (make-multipart-dummy-file item)))))
+             (let ((filename (path-string:join "/tmp" (make-random-string))))
+               (make-instance 'multipart-vfile-tree:multipart-vfile-node
+                              :path filename
+                              :base "/tmp"
+                              :contents item)))
+           (make-multipart (item recurse-p)
+             (typecase item
+               (pathname
+                (multipart-vfile-tree:make-multipart-vfile-tree (namestring item) :recurse-p recurse-p :file-class 'ipfs-multipart-node :directory-class 'ipfs-multipart-directory-node))
+               (string
+                (if (or (uiop:file-exists-p item) (uiop:directory-exists-p item))
+                    (multipart-vfile-tree:make-multipart-vfile-tree item :recurse-p recurse-p :file-class 'ipfs-multipart-node :directory-class 'ipfs-multipart-directory-node)
+                    (make-multipart-dummy-file item)))
+               (otherwise
+                (make-multipart-dummy-file item)))))
     (let ((recursive-p (or (assoc "r" opts :test #'string=)
-			   (assoc "recursive" opts :test #'string=))))
+                           (assoc "recursive" opts :test #'string=))))
       (if (listp args)
-	  (mapcar (lambda (arg)
-		    (make-multipart arg recursive-p))
-		  args)
-	  (list (make-multipart args recursive-p))))))
+          (mapcar (lambda (arg)
+                    (make-multipart arg recursive-p))
+                  args)
+          (list (make-multipart args recursive-p))))))
 
 (defun args-to-opts (args)
   (if (atom args)
