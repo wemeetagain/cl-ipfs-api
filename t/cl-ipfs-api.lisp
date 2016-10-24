@@ -70,27 +70,55 @@
 
 (subtest "command expansion"
   ;; test normal
-  (is-expand (cl-ipfs-api::define-command :name ("test" "command") :args ((:name "data" :required t)) :kwargs ("encoding") :description "test description")
-	     (defun test-command (data &key (encoding cl-ipfs-api:*encoding*) cl-ipfs-api::want-stream)
-	       "test description"
-	       (cl-ipfs-api:request-api "/test/command" data (list (cons "encoding" encoding)) cl-ipfs-api::want-stream nil)))
+  (is-expand (cl-ipfs-api::define-command
+                 :name ("test" "command")
+                 :args ((:name "data" :required t))
+                 :kwargs ("encoding")
+                 :description "test description")
+             (defun test-command (data &key (encoding cl-ipfs-api:*encoding*) cl-ipfs-api::want-stream)
+               "test description"
+               (cl-ipfs-api:request-api "/test/command"
+                                        data
+                                        nil
+                                        (list (cons "encoding" encoding))
+                                        cl-ipfs-api::want-stream
+                                        nil)))
   ;; variadic args
-  (is-expand (cl-ipfs-api::define-command :name ("test" "command") :args ((:name "data" :required nil)) :kwargs ("encoding") :description "test description")
-	     (defun test-command (data &key (encoding cl-ipfs-api:*encoding*) cl-ipfs-api::want-stream)
-	       "test description"
-	       (cl-ipfs-api:request-api "/test/command" data (list (cons "encoding" encoding)) cl-ipfs-api::want-stream nil)))
+  (is-expand (cl-ipfs-api::define-command
+                 :name ("test" "command")
+                 :args ((:name "data" :required nil))
+                 :kwargs ("encoding")
+                 :description "test description")
+             (defun test-command (data &key (encoding cl-ipfs-api:*encoding*) cl-ipfs-api::want-stream)
+               "test description"
+               (cl-ipfs-api:request-api "/test/command"
+                                        data
+                                        nil
+                                        (list (cons "encoding" encoding))
+                                        cl-ipfs-api::want-stream
+                                        nil)))
   ;; stream output
-  (is-expand (cl-ipfs-api::define-command :name ("test" "command") :args ((:name "data" :required t)) :kwargs () :description "test description" :output "stream")
-	     (defun test-command (data &key cl-ipfs-api::want-stream)
-	       "test description"
-	       (cl-ipfs-api:request-api "/test/command" data (list (cons "encoding" "text")) cl-ipfs-api::want-stream t))))
+  (is-expand (cl-ipfs-api::define-command
+                 :name ("test" "command")
+                 :args ((:name "data" :required t))
+                 :kwargs ()
+                 :description "test description"
+                 :output "stream")
+             (defun test-command (data &key cl-ipfs-api::want-stream)
+               "test description"
+               (cl-ipfs-api:request-api "/test/command"
+                                        data
+                                        nil
+                                        (list (cons "encoding" "text"))
+                                        cl-ipfs-api::want-stream
+                                        t))))
 
 (subtest "add"
   (is (cdr (assoc "Hash" (car (cl-ipfs-api:add *test-file-path*)) :test #'string=))
       (cadr (split-sequence:split-sequence #\Space (ipfs-command '("add") `(,*test-file-path*) nil)))))
 
 (subtest "cat"
-  (is (babel:octets-to-string (cl-ipfs-api:cat *test-file-hash*))
+  (is (cl-ipfs-api:cat *test-file-hash*)
       (ipfs-command '("cat") `(,*test-file-hash*) nil)))
 
 (subtest "ls"
@@ -98,11 +126,11 @@
   (is-api-cli '("ls") `(,*test-dir-hash*) '(("encoding" "text"))))
 
 (subtest "refs"
-  (is (reverse (car (cl-ipfs-api:refs *test-dir-hash* :encoding "json")))
+  (is (cl-ipfs-api:refs *test-dir-hash* :encoding "json")
       (ipfs-command '("refs") `(,*test-dir-hash*) '(("encoding" "json")))))
 
 (subtest "refs local"
-  (is (babel:octets-to-string (cl-ipfs-api:refs-local :encoding "text"))
+  (is (cl-ipfs-api:refs-local :encoding "text")
       (ipfs-command '("refs" "local") nil nil)))
 
 (subtest "block stat"
@@ -110,7 +138,7 @@
   (is-api-cli '("block" "stat") `(,*test-file-hash*) '(("encoding" "text"))))
 
 (subtest "block get"
-  (is (babel:octets-to-string (cl-ipfs-api:block-get *test-file-hash*))
+  (is (cl-ipfs-api:block-get *test-file-hash*)
       (ipfs-command '("block" "get") `(,*test-file-hash*) nil)))
 
 (subtest "block put"
@@ -124,7 +152,7 @@
       (ipfs-command '("object" "new") nil '(("encoding" "text")))))
 
 (subtest "object data"
-  (is (babel:octets-to-string (cl-ipfs-api:object-data *test-file-hash*))
+  (is (cl-ipfs-api:object-data *test-file-hash*)
       (ipfs-command '("object" "data") `(,*test-file-hash*) nil)))
 
 (subtest "object links"
@@ -237,7 +265,7 @@
   (is-api-cli '("config") '("Datastore.Path" nil) '(("encoding" "text"))))
 
 (subtest "config show"
-  (is (babel:octets-to-string (cl-ipfs-api:config-show))
+  (is (cl-ipfs-api:config-show)
       (ipfs-command '("config" "show") nil nil)))
 
 ;(subtest "config replace")
