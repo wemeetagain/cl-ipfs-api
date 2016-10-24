@@ -110,11 +110,14 @@
           (list (make-multipart args recursive-p))))))
 
 (defun args-to-opts (args)
-  (if (atom args)
-      `(("arg" . ,args))
-      (loop for arg in args
-	 if (not (null arg))
-	 collect (cons "arg" arg))))
+  (cond ((null args)
+         nil)
+        ((atom args)
+         `(("arg" . ,args)))
+        (t
+         (loop for arg in args
+               if (not (null arg))
+                 collect (cons "arg" arg)))))
 
 (defun content-body-args-p (args)
   (flet ((content-body-arg-p (arg)
