@@ -15,11 +15,14 @@
     (parse encoding command stream)))
 
 (defmethod parse ((encoding json-encoding) command (stream stream))
-    (loop for json = (handler-case
-		       (yason:parse stream :object-as :alist)
-		     (error (c) c))
-     while (not (or (null json) (typep json 'error)))
-     collect json))
+  (let ((value (loop for json = (handler-case
+                                    (yason:parse stream :object-as :alist)
+                                  (error (c) c))
+                     while (not (or (null json) (typep json 'error)))
+                     collect json)))
+    (if (= 1 (length value))
+        (car value)
+        value)))
 
 (defclass text-encoding (encoding)
   ((%name :initform "text")))
