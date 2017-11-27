@@ -2,7 +2,9 @@
 [![Build Status](https://travis-ci.org/wemeetagain/cl-ipfs-api.svg?branch=master)](https://travis-ci.org/wemeetagain/cl-ipfs-api)
 [![Coverage Status](https://coveralls.io/repos/wemeetagain/cl-ipfs-api/badge.svg?branch=master&service=github)](https://coveralls.io/github/wemeetagain/cl-ipfs-api?branch=master)
 
-A client library for the IPFS API.
+![](https://ipfs.io/ipfs/QmQJ68PFMDdAsgCZvA1UVzzn18asVcf7HVvCDgpjiSCAse)
+
+> A client library for the IPFS API.
 
 ## Examples
 
